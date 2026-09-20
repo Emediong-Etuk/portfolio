@@ -51,30 +51,42 @@ avatar). Deploys run `npm run db:ensure-seed` instead, which only seeds
 tables that are still empty and never touches existing data, so your
 `/admin` edits survive every redeploy.
 
-## Deployment (Render)
+## Deployment (Render + Neon)
 
-This repo includes a `render.yaml` Blueprint, so deployment is a few
-clicks rather than manual setup:
+This repo includes a `render.yaml` Blueprint for the web service. It
+does **not** provision a Render Postgres database, because Render only
+allows one free-tier database per account — if that slot is already
+used by another project, the blueprint fails with "cannot have more
+than one active free tier database." Instead, bring a free Postgres
+database from [Neon](https://neon.tech) (or Supabase, or any Postgres
+host) and point this app at it.
 
-1. Push this repo to GitHub (already done if you're reading this from
-   the repo).
-2. In the Render dashboard: **New → Blueprint**, connect this GitHub repo.
-   Render reads `render.yaml` and provisions both the free Postgres
-   database and the web service automatically, with `DATABASE_URL` wired
-   between them and `ADMIN_SESSION_SECRET` auto-generated.
-3. You'll be prompted for the one value the blueprint intentionally
-   leaves blank: **`ADMIN_PASSWORD`**. Set it to whatever you want your
-   `/admin` login password to be.
-4. Click **Apply**. Render builds and deploys — the build step runs
+1. **Create the database.** Sign up at [neon.tech](https://neon.tech)
+   (free, no credit card), create a project, and copy its connection
+   string (`postgresql://...`). Append `?sslmode=require` if it isn't
+   already there.
+2. **Push this repo to GitHub** (already done if you're reading this
+   from the repo).
+3. **In the Render dashboard:** **New → Blueprint**, connect this
+   GitHub repo. Render reads `render.yaml` and sets up the `portfolio`
+   web service, with `ADMIN_SESSION_SECRET` auto-generated.
+4. You'll be prompted for the values the blueprint leaves blank:
+   - **`DATABASE_URL`** — the Neon connection string from step 1.
+   - **`ADMIN_PASSWORD`** — whatever you want your `/admin` login to be.
+5. Click **Apply**. Render builds and deploys — the build step runs
    migrations and the safe seed automatically
    (`prisma migrate deploy && npm run db:ensure-seed`), so the site is
    populated with your GitHub projects on first deploy with no extra step.
-5. Once live, visit `/admin` on your Render URL and sign in with the
-   password from step 3 to make edits.
+6. Once live, visit `/admin` on your Render URL and sign in with the
+   password from step 4 to make edits.
 
-The free Postgres plan on Render expires after 30 days unless upgraded —
-worth knowing before you rely on this long-term. To deploy elsewhere
-(Railway, Fly.io, a VPS), the shape is the same: provision Postgres, set
+If you'd rather use a second Render Postgres instead of Neon, that's
+fine too — just upgrade it off the free plan (Render's one-free-database
+limit only applies to free-tier databases), then set `DATABASE_URL` to
+its connection string the same way.
+
+To deploy elsewhere entirely (Railway, Fly.io, a VPS), the shape is the
+same: provision Postgres, set
 `DATABASE_URL`/`ADMIN_PASSWORD`/`ADMIN_SESSION_SECRET`, and run
 `npm run db:deploy && npm run db:ensure-seed && npm run build` as your
 build step.

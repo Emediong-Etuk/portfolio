@@ -1,8 +1,3 @@
-databases:
-  - name: portfolio-db
-    plan: free
-    postgresMajorVersion: "16"
-
 services:
   - type: web
     name: portfolio
@@ -14,10 +9,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Render allows only one free-tier Postgres database per account.
+      # Bring your own connection string from a free provider (Neon,
+      # Supabase, etc.) instead of provisioning a Render database here —
+      # see README.md "Deployment (Render)" for the Neon walkthrough.
       - key: DATABASE_URL
-        fromDatabase:
-          name: portfolio-db
-          property: connectionString
+        sync: false
       - key: ADMIN_PASSWORD
         sync: false
       - key: ADMIN_SESSION_SECRET
