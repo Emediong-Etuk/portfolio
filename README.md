@@ -4,7 +4,7 @@ Personal developer portfolio for Emediong Etuk — a backend-focused full-stack
 developer. Built with Next.js (App Router), TypeScript, Tailwind CSS v4,
 Framer Motion, and Prisma/PostgreSQL.
 
-Live site: _add your deployed URL here once you've deployed it._
+Live site: [portfolio-ohos.onrender.com](https://portfolio-ohos.onrender.com)
 
 ## Features
 

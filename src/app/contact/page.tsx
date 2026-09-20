@@ -3,6 +3,7 @@ import { Github, Mail, Copy } from "lucide-react";
 import { getProfile } from "@/lib/data";
 import { Reveal } from "@/components/reveal";
 import { CopyEmailButton } from "@/components/copy-email-button";
+import { gmailComposeUrl } from "@/lib/email";
 
 export const metadata: Metadata = { title: "Contact" };
 export const dynamic = "force-dynamic";
@@ -29,7 +30,9 @@ export default async function ContactPage() {
       <Reveal delay={0.1}>
         <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row">
           <a
-            href={`mailto:${profile.contactEmail}`}
+            href={gmailComposeUrl(profile.contactEmail)}
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent-500)] px-6 py-3 text-sm font-medium text-white transition-transform hover:scale-[1.03]"
           >
             <Mail size={16} />

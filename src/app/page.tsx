@@ -4,6 +4,7 @@ import { ArrowRight, Github, Mail } from "lucide-react";
 import { getProfile, getProjects, getServices } from "@/lib/data";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
+import { gmailComposeUrl } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,9 @@ export default async function HomePage() {
                 GitHub
               </a>
               <a
-                href={`mailto:${profile.contactEmail}`}
+                href={gmailComposeUrl(profile.contactEmail)}
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center gap-2 rounded-full border border-[var(--surface-border)] px-6 py-3 text-sm font-medium text-[var(--text)] transition-colors hover:border-[var(--text-faint)]"
               >
                 <Mail size={16} />
@@ -155,7 +158,9 @@ export default async function HomePage() {
               Reach out and let&apos;s talk.
             </p>
             <a
-              href={`mailto:${profile.contactEmail}`}
+              href={gmailComposeUrl(profile.contactEmail)}
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center gap-2 rounded-full bg-[var(--color-accent-500)] px-6 py-3 text-sm font-medium text-white transition-transform hover:scale-[1.03]"
             >
               <Mail size={16} />

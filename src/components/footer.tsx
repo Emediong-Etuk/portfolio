@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Github, Mail } from "lucide-react";
+import { gmailComposeUrl } from "@/lib/email";
 
 export function Footer({
   githubUrl,
@@ -26,7 +27,9 @@ export function Footer({
             <Github size={14} /> GitHub
           </a>
           <a
-            href={`mailto:${contactEmail}`}
+            href={gmailComposeUrl(contactEmail)}
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-1.5 transition-colors hover:text-[var(--text)]"
           >
             <Mail size={14} /> Email
