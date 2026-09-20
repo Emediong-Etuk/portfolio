@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id            String   @id @default(cuid())
+  name          String
+  role          String
+  tagline       String
+  bio           String
+  githubUsername String
+  githubUrl     String
+  contactEmail  String
+  location      String?
+  avatarUrl     String
+  avatarSource  AvatarSource @default(GITHUB)
+  updatedAt     DateTime @updatedAt
+}
+
+enum AvatarSource {
+  GITHUB
+  CUSTOM
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  order       Int     @default(0)
+}
+
+model Skill {
+  id       String    @id @default(cuid())
+  name     String
+  category SkillCategory @default(SOFT)
+  order    Int       @default(0)
+}
+
+enum SkillCategory {
+  SOFT
+  TECHNICAL
+}
+
+model Project {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  summary      String
+  description  String
+  role         String?
+  techStack    String[]
+  highlights   String[]
+  repoUrl      String
+  liveUrl      String?
+  featured     Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
