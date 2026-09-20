@@ -1,6 +1,6 @@
 import { githubAvatarUrl } from "../src/lib/github";
 
-export const GITHUB_USERNAME = "Emediong-Etuk";
+export const GITHUB_USERNAME = process.env.GITHUB_USERNAME || "Emediong-Etuk";
 
 export const profileData = {
   name: "Emediong Etuk",

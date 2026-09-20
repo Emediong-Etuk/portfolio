@@ -51,45 +51,56 @@ avatar). Deploys run `npm run db:ensure-seed` instead, which only seeds
 tables that are still empty and never touches existing data, so your
 `/admin` edits survive every redeploy.
 
-## Deployment (Render + Neon)
+## Deployment (Railway)
 
-This repo includes a `render.yaml` Blueprint for the web service. It
-does **not** provision a Render Postgres database, because Render only
-allows one free-tier database per account — if that slot is already
-used by another project, the blueprint fails with "cannot have more
-than one active free tier database." Instead, bring a free Postgres
-database from [Neon](https://neon.tech) (or Supabase, or any Postgres
-host) and point this app at it.
+This repo includes a `railway.toml`, so Railway mostly configures
+itself. Unlike Render, Railway doesn't limit you to one free database
+per account, so Postgres can live in the same project as the app.
 
-1. **Create the database.** Sign up at [neon.tech](https://neon.tech)
-   (free, no credit card), create a project, and copy its connection
-   string (`postgresql://...`). Append `?sslmode=require` if it isn't
-   already there.
-2. **Push this repo to GitHub** (already done if you're reading this
+1. **Push this repo to GitHub** (already done if you're reading this
    from the repo).
-3. **In the Render dashboard:** **New → Blueprint**, connect this
-   GitHub repo. Render reads `render.yaml` and sets up the `portfolio`
-   web service, with `ADMIN_SESSION_SECRET` auto-generated.
-4. You'll be prompted for the values the blueprint leaves blank:
-   - **`DATABASE_URL`** — the Neon connection string from step 1.
-   - **`ADMIN_PASSWORD`** — whatever you want your `/admin` login to be.
-5. Click **Apply**. Render builds and deploys — the build step runs
-   migrations and the safe seed automatically
-   (`prisma migrate deploy && npm run db:ensure-seed`), so the site is
-   populated with your GitHub projects on first deploy with no extra step.
-6. Once live, visit `/admin` on your Render URL and sign in with the
-   password from step 4 to make edits.
+2. **In the Railway dashboard:** **New Project → Deploy from GitHub
+   repo**, and select `Emediong-Etuk/portfolio`. Railway detects the
+   Node app via Nixpacks and reads `railway.toml` for the build/start
+   commands.
+3. **Add Postgres:** in the same project, **+ New → Database → Add
+   PostgreSQL**. Railway provisions it and exposes its connection
+   details as variables on that Postgres service.
+4. **Wire up the web service's variables** (select the `portfolio`
+   service → **Variables**):
+   - `DATABASE_URL` → reference the Postgres service's URL:
+     `${{ Postgres.DATABASE_URL }}` (Railway autocompletes this — pick
+     it from the reference picker rather than typing it by hand so it
+     always matches the actual service name).
+   - `ADMIN_PASSWORD` → whatever you want your `/admin` login to be.
+   - `ADMIN_SESSION_SECRET` → a random secret, e.g. the output of
+     `openssl rand -hex 32` run locally (Railway has no auto-generate
+     button like Render does, so generate one yourself and paste it in).
+   - `GITHUB_USERNAME` → `Emediong-Etuk` (already the default in
+     `prisma/seed-data.ts`, but harmless to set explicitly).
+5. **Deploy.** The start command in `railway.toml`
+   (`npm run db:deploy && npm run db:ensure-seed && npm run start`)
+   runs migrations and the safe seed automatically on every boot, so
+   the site is populated with your GitHub projects on first deploy and
+   your `/admin` edits are never overwritten on later ones.
+6. Once live, open the Railway-assigned URL (or a custom domain, under
+   **Settings → Networking**) and visit `/admin` to sign in.
 
-If you'd rather use a second Render Postgres instead of Neon, that's
-fine too — just upgrade it off the free plan (Render's one-free-database
-limit only applies to free-tier databases), then set `DATABASE_URL` to
-its connection string the same way.
+### Alternative: Render
 
-To deploy elsewhere entirely (Railway, Fly.io, a VPS), the shape is the
-same: provision Postgres, set
+A `render.yaml` Blueprint is also included if you'd rather use Render.
+Render allows only **one free-tier Postgres database per account**, so
+if that slot is already taken by another project, bring an external
+free database (e.g. [Neon](https://neon.tech)) and set `DATABASE_URL`
+manually when the blueprint prompts for it — it's left blank
+(`sync: false`) for exactly that reason.
+
+To deploy anywhere else (Fly.io, a VPS, etc.), the shape is the same:
+provision Postgres, set
 `DATABASE_URL`/`ADMIN_PASSWORD`/`ADMIN_SESSION_SECRET`, and run
-`npm run db:deploy && npm run db:ensure-seed && npm run build` as your
-build step.
+`npm run db:deploy && npm run db:ensure-seed && npm run build` at build
+time (or fold the migrate/seed into your start command as `railway.toml`
+does, if your platform's build step can't reach the database).
 
 ## Tech stack
 
