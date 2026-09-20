@@ -42,26 +42,42 @@ with the password you set in `ADMIN_PASSWORD`.
 | `ADMIN_SESSION_SECRET`   | Random secret used to sign the admin session cookie (`openssl rand -hex 32`) |
 | `GITHUB_USERNAME`        | Used by the seed script to set your GitHub username/avatar          |
 
-### Editing content after the first seed
+### Editing content
 
-Once seeded, don't re-run `npm run db:seed` in production — it wipes and
-re-inserts everything. Use `/admin` instead for day-to-day edits (projects,
-bio, services, avatar). The seed script is only meant for the initial setup
-or for resetting a dev database.
+`npm run db:seed` is a **destructive dev-only reset** — it wipes and
+re-inserts everything, so never run it in production. Once the site is
+live, use `/admin` for all day-to-day edits (projects, bio, services,
+avatar). Deploys run `npm run db:ensure-seed` instead, which only seeds
+tables that are still empty and never touches existing data, so your
+`/admin` edits survive every redeploy.
 
-## Deployment
+## Deployment (Render)
 
-This app needs a persistent Postgres database — deploy it anywhere that
-supports Node.js + Postgres (Render, Railway, Fly.io, a VPS, etc.). On
-Render, a typical setup is:
+This repo includes a `render.yaml` Blueprint, so deployment is a few
+clicks rather than manual setup:
 
-1. Create a Postgres instance, copy its connection string into `DATABASE_URL`.
-2. Create a Web Service from this repo:
-   - Build command: `npm install && npm run db:deploy && npm run build`
-   - Start command: `npm run start`
-3. Set `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` in the service's environment.
-4. After the first deploy, run `npm run db:seed` once (via a one-off job or
-   shell) to populate your initial profile/projects.
+1. Push this repo to GitHub (already done if you're reading this from
+   the repo).
+2. In the Render dashboard: **New → Blueprint**, connect this GitHub repo.
+   Render reads `render.yaml` and provisions both the free Postgres
+   database and the web service automatically, with `DATABASE_URL` wired
+   between them and `ADMIN_SESSION_SECRET` auto-generated.
+3. You'll be prompted for the one value the blueprint intentionally
+   leaves blank: **`ADMIN_PASSWORD`**. Set it to whatever you want your
+   `/admin` login password to be.
+4. Click **Apply**. Render builds and deploys — the build step runs
+   migrations and the safe seed automatically
+   (`prisma migrate deploy && npm run db:ensure-seed`), so the site is
+   populated with your GitHub projects on first deploy with no extra step.
+5. Once live, visit `/admin` on your Render URL and sign in with the
+   password from step 3 to make edits.
+
+The free Postgres plan on Render expires after 30 days unless upgraded —
+worth knowing before you rely on this long-term. To deploy elsewhere
+(Railway, Fly.io, a VPS), the shape is the same: provision Postgres, set
+`DATABASE_URL`/`ADMIN_PASSWORD`/`ADMIN_SESSION_SECRET`, and run
+`npm run db:deploy && npm run db:ensure-seed && npm run build` as your
+build step.
 
 ## Tech stack
 
