@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, Github } from "lucide-react";
 import { getProjectBySlug } from "@/lib/data";
 import { Reveal } from "@/components/reveal";
+import { recordPageView, recordProjectClick } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export default async function ProjectDetailPage({
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
   if (!project) notFound();
+
+  recordPageView(`/projects/${slug}`);
+  recordProjectClick(project.id);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-20">

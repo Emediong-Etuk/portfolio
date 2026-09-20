@@ -7,16 +7,20 @@ import type { Profile, Project } from "@prisma/client";
 import { ProjectForm } from "@/components/admin/project-form";
 import { ProjectList } from "@/components/admin/project-list";
 import { ProfileForm } from "@/components/admin/profile-form";
+import { AnalyticsPanel } from "@/components/admin/analytics-panel";
+import type { AnalyticsSummary } from "@/lib/analytics";
 
 export function AdminDashboard({
   initialProfile,
   initialProjects,
+  analytics,
 }: {
   initialProfile: Profile;
   initialProjects: Project[];
+  analytics: AnalyticsSummary;
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"projects" | "profile">("projects");
+  const [tab, setTab] = useState<"analytics" | "projects" | "profile">("analytics");
   const [profile, setProfile] = useState(initialProfile);
   const [projects, setProjects] = useState(initialProjects);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -61,7 +65,7 @@ export function AdminDashboard({
       </div>
 
       <div className="mb-8 flex gap-1 rounded-lg border border-[var(--surface-border)] bg-[var(--bg-subtle)] p-1 text-sm">
-        {(["projects", "profile"] as const).map((t) => (
+        {(["analytics", "projects", "profile"] as const).map((t) => (
           <button
             key={t}
             type="button"
@@ -77,7 +81,9 @@ export function AdminDashboard({
         ))}
       </div>
 
-      {tab === "projects" ? (
+      {tab === "analytics" && <AnalyticsPanel analytics={analytics} />}
+
+      {tab === "projects" && (
         <div className="flex flex-col gap-4">
           {showAddForm ? (
             <div className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface)] p-4">
@@ -100,9 +106,9 @@ export function AdminDashboard({
 
           <ProjectList projects={projects} onChange={setProjects} />
         </div>
-      ) : (
-        <ProfileForm profile={profile} onSaved={setProfile} />
       )}
+
+      {tab === "profile" && <ProfileForm profile={profile} onSaved={setProfile} />}
     </div>
   );
 }

@@ -61,4 +61,27 @@ model Project {
   order        Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  clicks       ProjectClick[]
+}
+
+// One row per page render. Used to power the traffic dashboard in /admin.
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  createdAt DateTime @default(now())
+
+  @@index([path])
+  @@index([createdAt])
+}
+
+// One row per visit to a project's detail page — the "click" a project
+// card produces when someone opens it from the projects grid.
+model ProjectClick {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([createdAt])
 }

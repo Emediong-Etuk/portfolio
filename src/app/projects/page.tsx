@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { getProjects } from "@/lib/data";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
+import { recordPageView } from "@/lib/analytics";
 
 export const metadata: Metadata = { title: "Projects" };
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
+  recordPageView("/projects");
+
   const projects = await getProjects();
 
   return (

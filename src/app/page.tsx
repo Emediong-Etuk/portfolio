@@ -5,10 +5,13 @@ import { getProfile, getProjects, getServices } from "@/lib/data";
 import { ProjectCard } from "@/components/project-card";
 import { Reveal } from "@/components/reveal";
 import { gmailComposeUrl } from "@/lib/email";
+import { recordPageView } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  recordPageView("/");
+
   const [profile, projects, services] = await Promise.all([
     getProfile(),
     getProjects(),
@@ -46,16 +49,12 @@ export default async function HomePage() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <h1 className="text-balance font-[var(--font-display)] text-4xl font-semibold leading-tight tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="text-balance font-[var(--font-display)] text-2xl font-bold leading-snug tracking-tight sm:text-3xl md:text-4xl">
+              <span className="italic font-medium text-[var(--color-accent-500)]">
+                Hi, I&apos;m {profile.name.split(" ")[0]}.{" "}
+              </span>
               {profile.tagline}
             </h1>
-          </Reveal>
-
-          <Reveal delay={0.18}>
-            <p className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-              Hi, I&apos;m {profile.name.split(" ")[0]}. I design and build backend
-              systems and the products around them — see the work below.
-            </p>
           </Reveal>
 
           <Reveal delay={0.26}>

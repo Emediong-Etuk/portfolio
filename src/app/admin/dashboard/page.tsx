@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/db";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
+import { getAnalyticsSummary } from "@/lib/analytics";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const [profile, projects] = await Promise.all([
+  const [profile, projects, analytics] = await Promise.all([
     prisma.profile.findFirst(),
     prisma.project.findMany({ orderBy: { order: "asc" } }),
+    getAnalyticsSummary(),
   ]);
 
   if (!profile) {
@@ -17,5 +19,11 @@ export default async function AdminDashboardPage() {
     );
   }
 
-  return <AdminDashboard initialProfile={profile} initialProjects={projects} />;
+  return (
+    <AdminDashboard
+      initialProfile={profile}
+      initialProjects={projects}
+      analytics={analytics}
+    />
+  );
 }

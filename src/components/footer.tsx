@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Github, Mail } from "lucide-react";
 import { gmailComposeUrl } from "@/lib/email";
 
@@ -34,9 +33,6 @@ export function Footer({
           >
             <Mail size={14} /> Email
           </a>
-          <Link href="/admin" className="transition-colors hover:text-[var(--text)]">
-            Admin
-          </Link>
         </div>
       </div>
     </footer>

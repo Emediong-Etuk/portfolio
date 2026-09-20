@@ -2,11 +2,14 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { getProfile, getServices, getSkills } from "@/lib/data";
 import { Reveal } from "@/components/reveal";
+import { recordPageView } from "@/lib/analytics";
 
 export const metadata: Metadata = { title: "About" };
 export const dynamic = "force-dynamic";
 
 export default async function AboutPage() {
+  recordPageView("/about");
+
   const [profile, services, skills] = await Promise.all([
     getProfile(),
     getServices(),

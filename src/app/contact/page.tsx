@@ -4,11 +4,14 @@ import { getProfile } from "@/lib/data";
 import { Reveal } from "@/components/reveal";
 import { CopyEmailButton } from "@/components/copy-email-button";
 import { gmailComposeUrl } from "@/lib/email";
+import { recordPageView } from "@/lib/analytics";
 
 export const metadata: Metadata = { title: "Contact" };
 export const dynamic = "force-dynamic";
 
 export default async function ContactPage() {
+  recordPageView("/contact");
+
   const profile = await getProfile();
 
   return (
