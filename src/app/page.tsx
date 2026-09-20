@@ -49,10 +49,7 @@ export default async function HomePage() {
           </Reveal>
 
           <Reveal delay={0.1}>
-            <h1 className="text-balance font-[var(--font-display)] text-2xl font-bold leading-snug tracking-tight sm:text-3xl md:text-4xl">
-              <span className="italic font-medium text-[var(--color-accent-500)]">
-                Hi, I&apos;m {profile.name.split(" ")[0]}.{" "}
-              </span>
+            <h1 className="text-balance font-[var(--font-hero)] text-xl font-bold leading-snug tracking-tight sm:text-2xl md:text-3xl">
               {profile.tagline}
             </h1>
           </Reveal>

@@ -6,6 +6,7 @@
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  --font-hero: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
   --color-accent-50: #f2f0ff;
   --color-accent-100: #e6e2ff;

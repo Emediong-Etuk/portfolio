@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { spaceGrotesk, inter, jetbrainsMono } from "@/lib/fonts";
+import { spaceGrotesk, inter, jetbrainsMono, bricolageGrotesque } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -33,7 +33,7 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${bricolageGrotesque.variable}`}
     >
       <body className="noise-bg flex min-h-screen flex-col antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
